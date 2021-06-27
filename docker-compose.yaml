@@ -1,0 +1,63 @@
+version: '3.9'
+
+services:
+  book-service:
+    image: jainmanav277/msv2-bookapi:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "9082:9082"
+    networks:
+      - book-subscription-network
+    depends_on:
+      - service-discovery
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-discovery:9084/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+
+  subscription-service:
+    image: jainmanav277/msv2-SubscriptionService:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "9087:9087"
+    networks:
+      - book-subscription-network
+    depends_on:
+      - service-discovery
+      environment:
+        EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-discovery:9084/eureka
+        SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+
+  api-gateway:
+    image: jainmanav277/msv2-api-gateway:0.0.1-SNAPSHOT
+      mem_limit: 700m
+      ports:
+        - "9085:9085"
+      networks:
+        - book-subscription-network
+      depends_on:
+        - service-discovery
+      environment:
+        EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-discovery:9084/eureka
+        SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+
+  service-discovery:
+    image: jainmanav277/msv2-ServiceDiscovery:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "9084:9084"
+    networks:
+      - book-subscription-network
+
+  #docker run -p 9411:9411 openzipkin/zipkin:2.23 now lets add a service for to launch zipkin from docker-compose
+  #below config is defaulted in the MS so we have to configure this for containers to log request to zipkin server
+  #spring.zipkin.baseUrl=http://localhost:9411/
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    mem_limit: 300m
+    ports:
+      - "9411:9411"
+    networks:
+      - book-subscription-network
+
+networks:
+  book-subscription-network:

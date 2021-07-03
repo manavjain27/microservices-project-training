@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import java.util.List;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,11 +35,14 @@ import com.example.demo.service.SubscriptionServiceInterface;
 @RequestMapping("/api")
 public class SubscriptionController {
 
+	private static final Logger LOG = LoggerFactory.getLogger(SubscriptionController.class);
+	
 	@Autowired
 	SubscriptionServiceInterface subscriptionServiceInterface;
 	
 	@GetMapping("/subscription")
 	public List<Subscription> getAllSubscriptions() {
+	    LOG.info("Subscriptions are Retrieved");
 	    return subscriptionServiceInterface.findAll();
 	}
 	
@@ -48,7 +53,8 @@ public class SubscriptionController {
 		Book book = httpClient(subscription.getBook_id());
 		if(book !=null) {
 			httpClient1(book,-1);
-	    subscription2 = subscriptionServiceInterface.addSubscription(subscription);
+	                subscription2 = subscriptionServiceInterface.addSubscription(subscription);
+			LOG.info("Subscription is Created");
 		}
 		}
 		catch(Exception e) {
@@ -59,6 +65,7 @@ public class SubscriptionController {
 	
 	@GetMapping("/subscription/{id}")
 	public Subscription getSubscriptionByName(@PathVariable(value = "id") String subscription_name) {
+	    LOG.info("Subscription is Retrieved with a particular name");
 	    return subscriptionServiceInterface.findByName(subscription_name).orElseThrow(() -> new SubscriptionNotFoundException("Subscription", "id", subscription_name));
 	}
 	
@@ -85,6 +92,7 @@ public class SubscriptionController {
 	    subscription.setSubscription_name(subscription_name);
 	    subscription.setBook_id(subscription.getBook_id());
 	    Subscription updatedSubscription = subscriptionServiceInterface.addSubscription(subscription);
+	    LOG.info("Subscription is Updated with a particular name");
 	    return updatedSubscription;
 	}
 	
@@ -95,7 +103,8 @@ public class SubscriptionController {
 			Book book = httpClient(subscription.getBook_id());
 			if(book !=null && (book.getAvailable_copies() <=book.getTotal_copies())) {
 				httpClient1(book,1);
-			    subscriptionServiceInterface.deleteSubscription(subscription);
+			        subscriptionServiceInterface.deleteSubscription(subscription);
+			        LOG.info("Subscription is Deleted with a particular name");
 			}
 			}
 			catch(Exception e) {

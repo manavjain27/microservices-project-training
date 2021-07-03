@@ -3,6 +3,8 @@ package com.wp.bookapi.controller;
 import java.util.List;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,22 +28,27 @@ import com.wp.bookapi.service.BookServiceInterface;
 @RequestMapping("/api")
 public class BookController {
 	
+	private static final Logger LOG = LoggerFactory.getLogger(BookController.class);
+	
 	@Autowired
 	BookServiceInterface bookServiceInterface;
 	
 	
 	@GetMapping("/book")
 	public List<Book> getAllBooks() {
+	    LOG.info("Books are Retrieved");
 	    return bookServiceInterface.findAll();
 	}
 	
 	@PostMapping("/book")
 	public Book createBook(@Valid @RequestBody Book book) {
+            LOG.info("Books is Added");
 	    return bookServiceInterface.addBook(book);
 	}
 	
 	@GetMapping("/book/{id}")
 	public Book getBookById(@PathVariable(value = "id") Long bookId) {
+	    LOG.info("Book is retreived with a particular id");
 	    return bookServiceInterface.findByBookId(bookId).orElseThrow(() -> new BookNotFoundException("Book", "id", bookId));
 	}
 	
@@ -49,6 +56,7 @@ public class BookController {
 	public Book updateBook(@PathVariable(value = "id") Long bookId,
 	                                        @Valid @RequestBody Book bookDetails) {
 
+		LOG.info("Book is Updated");
 		bookServiceInterface.findByBookId(bookId).orElseThrow(() -> new BookNotFoundException("Book", "id", bookId));
 	    
 	    bookDetails.setBook_id(bookId);
@@ -58,6 +66,7 @@ public class BookController {
 	
 	@DeleteMapping("/book/{id}")
 	public ResponseEntity<?> deleteBook(@PathVariable(value = "id") Long bookId) {
+	    LOG.info("Book is deleted");
 	    Book book = bookServiceInterface.findByBookId(bookId).orElseThrow(() -> new BookNotFoundException("Book", "id", bookId));
 
 	    bookServiceInterface.deleteBook(book);
@@ -68,6 +77,7 @@ public class BookController {
 	public Book updateBookAvailability(@PathVariable(value = "id") Long bookId,
 			@PathVariable(value = "incrementalCount") Long count) {
 
+	    LOG.info("Books availability is updated");
 	    Book bookDetails = bookServiceInterface.findByBookId(bookId).orElseThrow(() -> new BookNotFoundException("Book", "id", bookId));
 	    if(bookDetails.getAvailable_copies() + count <= bookDetails.getTotal_copies()) {
 	       bookDetails.setAvailable_copies(bookDetails.getAvailable_copies() + count);

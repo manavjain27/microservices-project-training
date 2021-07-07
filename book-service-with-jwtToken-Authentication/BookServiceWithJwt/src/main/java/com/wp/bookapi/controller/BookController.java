@@ -1,7 +1,6 @@
 package com.wp.bookapi.controller;
 
 import java.util.List;
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +52,7 @@ public class BookController {
 	}
 	
 	@PostMapping("/book")
-	public Book createBook(@Valid @RequestBody Book book) {
+	public Book createBook(@RequestBody Book book) {
 	    return bookServiceInterface.addBook(book);
 	}
 	
@@ -64,7 +63,7 @@ public class BookController {
 	
 	@PutMapping("/book/{id}")
 	public Book updateBook(@PathVariable(value = "id") Long bookId,
-	                                        @Valid @RequestBody Book bookDetails) {
+	                                        @RequestBody Book bookDetails) {
 
 		bookServiceInterface.findByBookId(bookId).orElseThrow(() -> new BookNotFoundException("Book", "id", bookId));
 	    

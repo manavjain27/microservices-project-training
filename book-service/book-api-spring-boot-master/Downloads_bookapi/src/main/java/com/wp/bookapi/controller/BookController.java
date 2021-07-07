@@ -1,7 +1,6 @@
 package com.wp.bookapi.controller;
 
 import java.util.List;
-import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,7 @@ public class BookController {
 	}
 	
 	@PostMapping("/book")
-	public Book createBook(@Valid @RequestBody Book book) {
+	public Book createBook(@RequestBody Book book) {
             LOG.info("Books is Added");
 	    return bookServiceInterface.addBook(book);
 	}
@@ -54,7 +53,7 @@ public class BookController {
 	
 	@PutMapping("/book/{id}")
 	public Book updateBook(@PathVariable(value = "id") Long bookId,
-	                                        @Valid @RequestBody Book bookDetails) {
+	                                        @RequestBody Book bookDetails) {
 
 		LOG.info("Book is Updated");
 		bookServiceInterface.findByBookId(bookId).orElseThrow(() -> new BookNotFoundException("Book", "id", bookId));

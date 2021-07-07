@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class SubscriptionController {
 	}
 	
 	@PostMapping("/subscription")
-	public Subscription createSubscription(@Valid @RequestBody Subscription subscription) {
+	public Subscription createSubscription(@RequestBody Subscription subscription) {
 		Subscription subscription2 = null;
 		try {
 		Book book = httpClient(subscription.getBook_id());
@@ -71,7 +70,7 @@ public class SubscriptionController {
 	
 	@PutMapping("/subscription/{id}")
 	public Subscription updateSubscription(@PathVariable(value = "id") String subscription_name,
-	                                        @Valid @RequestBody Subscription subscription) {
+	                                        @RequestBody Subscription subscription) {
 
 		Subscription subscription2 = subscriptionServiceInterface.findByName(subscription_name).orElseThrow(() -> new SubscriptionNotFoundException("Subscription", "id", subscription_name));
 	    if(subscription2.getBook_id() != subscription.getBook_id()) {
